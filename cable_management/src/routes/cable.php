@@ -13,7 +13,8 @@ $app->get('/api/cables', function (Request $request, Response $response, array $
                     v.name as connector_B,
                     cable.length,
                     cable.price,
-                    box.name as box
+                    box.name as box,
+                    cable.notes
             FROM    cable,connector as c, connector as v,box 
             WHERE   cable.conn_A = c.idCon AND
                     cable.conn_B = v.idCon AND
@@ -45,7 +46,8 @@ $app->get('/api/cable/{id}', function (Request $request, Response $response, arr
                     v.name as connector_B,
                     cable.length,
                     cable.price,
-                    box.name as box
+                    box.name as box,
+                    cable.notes
             FROM    cable,connector as c, connector as v,box 
             WHERE   cable.conn_A = c.idCon AND
                     cable.conn_B = v.idCon AND
@@ -83,7 +85,8 @@ $app->get('/api/cable/', function (Request $request, Response $response, array $
                     v.name as connector_B,
                     cable.length,
                     cable.price,
-                    box.name as box
+                    box.name as box,
+                    cable.notes
             FROM    cable,connector as c, connector as v,box 
             WHERE   cable.conn_A = c.idCon AND
                     cable.conn_B = v.idCon AND
@@ -136,6 +139,7 @@ $app->post('/api/cable/add', function (Request $request, Response $response, arr
     $length = $request->getParam('length');
     $price  = $request->getParam('price');
     $box = $request->getParam('box');
+    $notes = $request->getParam('notes');
 
     try {
         //create DB Obj
@@ -172,9 +176,9 @@ $app->post('/api/cable/add', function (Request $request, Response $response, arr
         $cableID = $cableID . lastCableID();
 
         $sql = "INSERT INTO Cable 
-                (idCable, type, conn_A, conn_B, length, price, idBoxDefault)
+                (idCable, type, conn_A, conn_B, length, price, idBoxDefault,notes)
                 VALUES 
-                (:idCable, :type, :conn_A, :conn_B, :length, :price, :idBoxDefault)";
+                (:idCable, :type, :conn_A, :conn_B, :length, :price, :idBoxDefault,:notes)";
 
         $stmt = $db->prepare($sql);
 
@@ -185,6 +189,7 @@ $app->post('/api/cable/add', function (Request $request, Response $response, arr
         $stmt->bindParam(':length', $length);
         $stmt->bindParam(':price', $price);
         $stmt->bindParam(':idBoxDefault', $box_ID);
+        $stmt->bindParam(':notes', $notes);
 
         $stmt->execute();
 
@@ -252,6 +257,7 @@ $app->put('/api/cable/update/{id}', function (Request $request, Response $respon
     $length  = $request->getParam('length');
     $price   = $request->getParam('price');
     $box     = $request->getParam('box');
+    $notes     = $request->getParam('notes');
 
 
     try {
@@ -279,7 +285,8 @@ $app->put('/api/cable/update/{id}', function (Request $request, Response $respon
                     conn_B=:conn_B,
                     length=:length,
                     price=:price,
-                    idBoxDefault=:idBoxDefault
+                    idBoxDefault=:idBoxDefault,
+                    notes=:notes
             WHERE idCable = '$oldId'";
 
         $stmt = $db->prepare($sql);
@@ -292,6 +299,7 @@ $app->put('/api/cable/update/{id}', function (Request $request, Response $respon
         $stmt->bindParam(':length', $length);
         $stmt->bindParam(':price', $price);
         $stmt->bindParam(':idBoxDefault', $box_ID);
+        $stmt->bindParam(':notes', $notes);
 
 
         $stmt->execute();
