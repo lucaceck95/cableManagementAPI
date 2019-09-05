@@ -147,7 +147,6 @@ $app->post('/api/cable/add', function (Request $request, Response $response, arr
         // connect
         $db = $db->connect();
 
-
         $conn_A_ID = getConnectorID($conn_A);
 
         $conn_B_ID = getConnectorID($conn_B);
