@@ -131,6 +131,24 @@ $app->get('/api/cables/maxlength', function (Request $request, Response $respons
     }
 });
 
+$app->get('/api/cables/notes', function (Request $request, Response $response, array $args) {
+    $sql = "SELECT distinct notes FROM cable where notes <>''";
+    try {
+        //create DB Obj
+        $db = new db();
+        // connect
+        $db = $db->connect();
+
+        $stmt = $db->query($sql);
+        $len = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $db = null;
+
+        echo json_encode($len);
+    } catch (PDOException $e) {
+        echo '{"error": {"text": ' . $e->getMessage() . '}}';
+    }
+});
+
 // add costumer
 $app->post('/api/cable/add', function (Request $request, Response $response, array $args) {
     $type   = $request->getParam('type');
